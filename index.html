@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Laksshay Singh | Inspirational Speaker</title>
+<title>Laksshay Singh | Personal Brand</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
@@ -118,7 +118,6 @@ footer{
     opacity:0.6;
 }
 
-/* Responsive */
 @media(max-width:768px){
     h1{
         font-size:40px;
@@ -137,7 +136,7 @@ footer{
 
 <div class="container">
     <h1>Laksshay Singh</h1>
-    <div class="tagline">The Most Inspirational Speaker</div>
+    <div class="tagline">“Master The System, Or Be Its Subject.”</div>
 
     <div class="bio">
         Empowering minds. Igniting ambition. Transforming lives.
@@ -146,8 +145,8 @@ footer{
     </div>
 
     <div class="buttons">
-        <a class="btn email" href="mailto:yourmail@gmail.com">📧 Connect via Email</a>
-        <a class="btn whatsapp" href="https://wa.me/911234567890">💬 Connect on WhatsApp</a>
+        <a class="btn email" href="mailto:laksshaysiingh@yahoo.com">📧 Connect via Email</a>
+        <a class="btn whatsapp" href="https://wa.me/919953691596">💬 Connect on WhatsApp</a>
     </div>
 </div>
 
@@ -163,6 +162,12 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let particlesArray = [];
+let mouse = {x:null,y:null,radius:120};
+
+window.addEventListener("mousemove",function(event){
+    mouse.x = event.x;
+    mouse.y = event.y;
+});
 
 class Particle{
     constructor(){
@@ -176,10 +181,17 @@ class Particle{
         this.x += this.speedX;
         this.y += this.speedY;
 
-        if(this.x > canvas.width) this.x = 0;
-        if(this.x < 0) this.x = canvas.width;
-        if(this.y > canvas.height) this.y = 0;
-        if(this.y < 0) this.y = canvas.height;
+        if(this.x > canvas.width || this.x < 0) this.speedX *= -1;
+        if(this.y > canvas.height || this.y < 0) this.speedY *= -1;
+
+        let dx = mouse.x - this.x;
+        let dy = mouse.y - this.y;
+        let distance = Math.sqrt(dx*dx + dy*dy);
+
+        if(distance < mouse.radius){
+            this.x -= dx/15;
+            this.y -= dy/15;
+        }
     }
     draw(){
         ctx.fillStyle = "rgba(0,245,160,0.8)";
@@ -189,8 +201,26 @@ class Particle{
     }
 }
 
+function connect(){
+    for(let a=0;a<particlesArray.length;a++){
+        for(let b=a;b<particlesArray.length;b++){
+            let dx=particlesArray[a].x-particlesArray[b].x;
+            let dy=particlesArray[a].y-particlesArray[b].y;
+            let distance=dx*dx+dy*dy;
+            if(distance<12000){
+                ctx.strokeStyle="rgba(0,217,245,0.2)";
+                ctx.lineWidth=1;
+                ctx.beginPath();
+                ctx.moveTo(particlesArray[a].x,particlesArray[a].y);
+                ctx.lineTo(particlesArray[b].x,particlesArray[b].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
+
 function init(){
-    particlesArray = [];
+    particlesArray=[];
     for(let i=0;i<120;i++){
         particlesArray.push(new Particle());
     }
@@ -202,13 +232,14 @@ function animate(){
         particlesArray[i].update();
         particlesArray[i].draw();
     }
+    connect();
     requestAnimationFrame(animate);
 }
 
 init();
 animate();
 
-window.addEventListener("resize",()=>{
+window.addEventListener("resize",function(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     init();
